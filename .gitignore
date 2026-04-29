@@ -1,0 +1,6 @@
+venv/
+data/chromadb/
+__pycache__/
+*.pyc
+.env
+models_list.txt
