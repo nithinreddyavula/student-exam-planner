@@ -74,5 +74,5 @@ if __name__ == "__main__":
     print(result)
 
     print("\nAsking question...")
-    answer = retrieve_answer("What is CPU scheduling?")
+    answer = retrieve_answer("What is quantum entanglement?")
     print(f"Answer: {answer}")
