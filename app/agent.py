@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+load_dotenv()
 from typing import TypedDict, List
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
@@ -12,17 +14,18 @@ embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 db = Chroma(
         collection_name="student_docs",
         embedding_function=embeddings,
-        persist_directory="./chroma_db"
+        persist_directory="../data/chromadb"
     )
-SIMILARITY_THRESHOLD = 0.5
-llm = ChatGroq(model_name="llama3-8b-8192")
+SIMILARITY_THRESHOLD = 1.2
+llm = ChatGroq(model_name="llama-3.3-70b-versatile")
 def retrieve(state: PlannerState) -> dict:
     results = db.similarity_search_with_score(state["question"], k=3)
     documents = [(doc.page_content, score) for doc, score in results]
+    print("SCORES:", [score for _, score in documents])
     return {"documents": documents}
 def grade_relevance(state: PlannerState) -> dict:
-    for text, score in state["documents"] :
-        if score < SIMILARITY_THRESHOLD :
+    for text, score in state["documents"]:
+        if score < SIMILARITY_THRESHOLD:
             return {"relevant": True}
     return {"relevant": False}
 def generate(state: PlannerState) -> dict:
@@ -42,4 +45,4 @@ workflow.set_entry_point("retrieve")
 workflow.add_edge("retrieve","grade_relevance")
 workflow.add_conditional_edges("grade_relevance",route)
 workflow.add_edge("generate",END)
-app=workflow.compile()
+planner_graph=workflow.compile()
