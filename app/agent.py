@@ -21,7 +21,6 @@ llm = ChatGroq(model_name="llama-3.3-70b-versatile")
 def retrieve(state: PlannerState) -> dict:
     results = db.similarity_search_with_score(state["question"], k=3)
     documents = [(doc.page_content, score) for doc, score in results]
-    print("SCORES:", [score for _, score in documents])
     return {"documents": documents}
 def grade_relevance(state: PlannerState) -> dict:
     for text, score in state["documents"]:
