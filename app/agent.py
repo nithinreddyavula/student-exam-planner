@@ -21,7 +21,13 @@ llm = ChatGroq(model_name="llama-3.3-70b-versatile")
 def retrieve(state: PlannerState) -> dict:
     results = db.similarity_search_with_score(state["question"], k=3)
     documents = [(doc.page_content, score) for doc, score in results]
+    if not documents :
+        return {"documents": [], "answer": "No relevant data found in the PDF. Please refer to another source."}
     return {"documents": documents}
+def check_docs(state: PlannerState) -> str:
+    if (len(state["documents"])) == 0:
+        return "end"
+    return "grade_relevance"
 def grade_relevance(state: PlannerState) -> dict:
     for text, score in state["documents"]:
         if score < SIMILARITY_THRESHOLD:
@@ -41,7 +47,7 @@ workflow.add_node("retrieve", retrieve)
 workflow.add_node("grade_relevance", grade_relevance)
 workflow.add_node("generate", generate)
 workflow.set_entry_point("retrieve")
-workflow.add_edge("retrieve","grade_relevance")
+workflow.add_conditional_edges("retrieve",check_docs,{"end": END, "grade_relevance":"grade_relevance"})
 workflow.add_conditional_edges("grade_relevance",route)
 workflow.add_edge("generate",END)
 planner_graph=workflow.compile()
