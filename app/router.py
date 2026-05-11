@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from agent import planner_graph
 
@@ -17,11 +17,13 @@ async def ask(request: AskRequest):
         if not answer:
             return {"answer": "No relevant data found. Please refer to another source."}
 
-        return {"answer": answer}
+        return {
+    "answer": result["answer"],
+    "evaluation_scores": result["evaluation_scores"]
+       }
 
-    except Exception:
-        raise HTTPException(
-            status_code=500,
-            detail="Something went wrong while processing your request."
-        )
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
     
