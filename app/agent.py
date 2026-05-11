@@ -21,11 +21,13 @@ llm = ChatGroq(model_name="llama-3.3-70b-versatile")
 def retrieve(state: PlannerState) -> dict:
     results = db.similarity_search_with_score(state["question"], k=3)
     documents = [(doc.page_content, score) for doc, score in results]
-    if not documents :
+    if not documents:
         return {"documents": [], "answer": "No relevant data found in the PDF. Please refer to another source."}
     return {"documents": documents}
+
+# conditional function — reads state, returns string
 def check_docs(state: PlannerState) -> str:
-    if (len(state["documents"])) == 0:
+    if len(state["documents"]) == 0:
         return "end"
     return "grade_relevance"
 def grade_relevance(state: PlannerState) -> dict:
