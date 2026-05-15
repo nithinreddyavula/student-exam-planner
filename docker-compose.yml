@@ -1,0 +1,49 @@
+services:
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: examplanner
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  python-rag:
+    build:
+      context: ./student-exam-planner-python
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    env_file:
+      - ./student-exam-planner-python/.env
+    volumes:
+      - ./student-exam-planner-python/app/chroma_db:/app/chroma_db
+
+  app:
+    build:
+      context: ./student-exam-planner-springboot
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+      - redis
+      - python-rag
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/examplanner
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_DATA_REDIS_HOST: redis
+      FASTAPI_URL: http://python-rag:8000/api/ask
+
+volumes:
+  redis_data:
+  mysql_data:
