@@ -17,10 +17,7 @@ async def ask(request: AskRequest):
         if not answer:
             return {"answer": "No relevant data found. Please refer to another source."}
 
-        return {
-    "answer": result["answer"],
-    "evaluation_scores": result["evaluation_scores"]
-       }
+        return {"answer": result["answer"]}
 
     except Exception as e:
         import traceback
