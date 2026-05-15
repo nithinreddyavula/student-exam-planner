@@ -1,11 +1,11 @@
 from dotenv import load_dotenv
 load_dotenv()
 from langchain_community.document_loaders import PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 
-loader = PyPDFLoader("../data/os.pdf")
+loader = PyPDFLoader("./os.pdf")
 pages = loader.load()
 print(f"Loaded {len(pages)} pages")
 
@@ -22,7 +22,7 @@ db = Chroma.from_documents(
     documents=chunks,
     embedding=embeddings,
     collection_name="student_docs",
-    persist_directory="../data/chromadb"
+    persist_directory="./chroma_db"
 )
 
 print(f"Ingestion complete. Total documents stored: {db._collection.count()}")
