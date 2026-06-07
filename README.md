@@ -151,3 +151,13 @@ LangGraph's stateful agent with conditional edges allows the `grade_relevance` s
 ## 🌐 Live deployment
 
 Four-container stack deployed on AWS EC2 with CPU-optimised Docker builds. The system handles concurrent requests via Spring Boot's thread pool with Redis caching absorbing repeated queries.
+
+## 👨‍💻 Connect With Me
+
+**Nithin Kumar Reddy Avula**
+
+* LinkedIn: https://www.linkedin.com/in/avula-nithin-kumar-reddy-0b0641323/
+* GitHub: https://github.com/nithinreddyavula
+
+Feel free to connect with me to discuss Backend Engineering, RAG Systems, LangGraph, FastAPI, Spring Boot, Redis, Vector Databases, and AI Infrastructure.
+
